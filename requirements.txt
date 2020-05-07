@@ -1,0 +1,4 @@
+flask
+python3
+mysql
+apscheduler

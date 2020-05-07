@@ -1,5 +1,8 @@
 # REDIRECT_URI = "https://www.naver.com"
 import secret
+CLIENT_ID = "2451a2427184f294a2ec8809755643ddbee64c1603d20b152bc5afc343c3c2fa"
+CLIENT_SECRET = "846d0c3279a8eee15b55c571d55fb00f5123c856f6e014e8264c911f2a97a603"
+
 REDIRECT_URI = "http://localhost:65010/callback"
 
 from flask import Flask
@@ -36,6 +39,7 @@ def get_token(code):
 	response = requests.post("https://api.intra.42.fr/oauth/token",
 							 data=post_data)
 	token_json = response.json()
+	print(token_json)
 	return token_json["access_token"]
 
 from flask import abort, request
@@ -51,7 +55,7 @@ def reddit_callback():
 	code = request.args.get('code')
 	# We'll change this next line in just a moment
 	token = get_token(code)
-	req_url = "https://api.intra.42.fr/v2/notes"
+	req_url = "https://api.intra.42.fr/v2/me/scale_teams/as_corrector"
 	headers = {"Authorization": "Bearer " + token}
 	# print(headers)
 	res = requests.get(req_url, headers=headers)
