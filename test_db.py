@@ -1,5 +1,5 @@
 #noti_bot
-REDIRECT_URI = "http://d2b3dab8.ngrok.io/callback"
+REDIRECT_URI = 'http://c55194e1.ngrok.io/callback'
 CLIENT_ID="8f45964ae9efeb4d7e19e73b66bf7335a1c878df4629c23e48164701d35e9468"
 CLIENT_SECRET="e7f8f0ff740f3a26eb755f748c81cc36671922ae5bd70cf42b557ce4774f7633"
 
@@ -11,9 +11,9 @@ from sqlalchemy import create_engine, text, Table, Column, String, MetaData
 from sqlalchemy.sql import select, column
 import os
 from slack import WebClient
+import webbrowser
 
 app = Flask(__name__)
-import webbrowser
 
 @app.route('/register', methods=['POST'])
 def register():
