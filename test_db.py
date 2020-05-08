@@ -7,7 +7,10 @@ import requests
 import requests.auth
 import urllib.parse
 from flask import Flask, request, jsonify, current_app, abort, redirect
-from sqlalchemy import create_engine, text, Table, Column, String, MetaData, ForeignKey
+from sqlalchemy import create_engine, text, Table, Column, String, MetaData
+from sqlalchemy.sql import select, column
+import os
+from slack import WebClient
 
 app = Flask(__name__)
 import webbrowser
@@ -46,29 +49,35 @@ def get_token(code, user_id):
 	response = requests.post("https://api.intra.42.fr/oauth/token",
 							 data=post_data)
 	token_json = response.json()
-	print(token_json)
-	return token_json["access_token"]
-
+	if "access_token" in token_json.keys():
+		return token_json["access_token"]
+	else:
+		print("Not Found access_token!")
+		return None
 
 @app.route('/callback')
 def reddit_callback():
 	user_id = request.args.get('user_id')
+	print("!!!user_id",user_id)
 	error = request.args.get('error', '')
 	if error:
 		return "Error: " + error
 	code = request.args.get('code')
 	token = get_token(code, user_id)
+	if token == None:
+		return "Error : Not Found access_token "
 	req_url = "https://api.intra.42.fr/v2/notes"
 	headers = {"Authorization": "Bearer " + token}
 	res = requests.get(req_url, headers=headers)
-	connection.execute(t.insert(), user_id=user_id,token=token)
-	# connection.execute(t.update(),
-	trans.commit()
-
-	return "got a code! %s\n and token!" % code +"   "+token
-
-import os
-from slack import WebClient
+	query =select([t]).where(t.columns.user_id == '%s' %user_id)
+	if connection.execute(query).fetchall() == []:
+		connection.execute(t.insert(), user_id=user_id,token=token)
+		trans.commit()
+		# print("Add token!")
+		return "got a code! %s\n And token is %s" % (code, token)
+	else:
+		# print("Already token exist!")
+		return "Already token exist!"
 
 # SLACK_TOKEN = "xoxb-1096950849861-1098346016706-VvuMrgVls6iRzohz48A6hY30"
 # client = WebClient(token=slack_token)
@@ -96,14 +105,11 @@ if __name__ == '__main__':
 	t = Table(
 		'auth', meta,
 		Column('user_id',String(20), primary_key=True),
-		# Column('code', String(64)),
 		Column('token',String(64)),
 	)
 	meta.create_all(engine)
 	connection = engine.connect()
 	trans = connection.begin()
 
-	# init_users = get_user(client)
-
-	while 1:
+	while True:
 		app.run(debug=True, port=65010)
