@@ -73,10 +73,8 @@ def reddit_callback():
 	if connection.execute(query).fetchall() == []:
 		connection.execute(t.insert(), user_id=user_id,token=token)
 		trans.commit()
-		# print("Add token!")
 		return "got a code! %s\n And token is %s" % (code, token)
 	else:
-		# print("Already token exist!")
 		return "Already token exist!"
 
 if __name__ == '__main__':
