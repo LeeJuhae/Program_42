@@ -2,3 +2,4 @@ flask
 python3
 mysql
 apscheduler
+slack
