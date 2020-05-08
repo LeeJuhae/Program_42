@@ -57,12 +57,8 @@ def reddit_callback():
 	token = get_token(code)
 	req_url = "https://api.intra.42.fr/v2/me/scale_teams/as_corrector"
 	headers = {"Authorization": "Bearer " + token}
-	# print(headers)
 	res = requests.get(req_url, headers=headers)
-	# f = open("a.txt","w")
-	# f.write(res.text)
-	# f.close()
-	print(res.text)
+	# print(res.text)
 	return "got a code! %s\n and token!" % code +"   "+token
 
 if __name__ == '__main__':
