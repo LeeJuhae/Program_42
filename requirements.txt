@@ -1,6 +1,10 @@
 flask
 python3
-mysql
+mysql-connector
+mysql-connector-python
 apscheduler
 slack
 slackclient
+setuptools
+sqlalchemy
+mysql-server(apt)
