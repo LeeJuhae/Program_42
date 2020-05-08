@@ -79,23 +79,6 @@ def reddit_callback():
 		# print("Already token exist!")
 		return "Already token exist!"
 
-# SLACK_TOKEN = "xoxb-1096950849861-1098346016706-VvuMrgVls6iRzohz48A6hY30"
-# client = WebClient(token=slack_token)
-# client = WebClient(token=os.environ['SLACK_TOKEN'])
-
-# slack_token="Bot User OAuth Access Token"
-
-# user_id = [user['id'] for user in client.users_list()['members'] if user['name'] == 'jushin'][0]
-# response = client.conversations_open(users=user_id)
-# client.chat_postMessage(channel=response['channel']['id'], text="Hello", user=user_id )
-
-# def get_user(client):
-# 	real_users = list()
-# 	for user in client.users_list()['members']:
-# 		if user['is_bot'] == False and user['real_name'] != 'Slackbot':
-# 			real_users.append(user['id'])
-# 	return (real_users)
-
 if __name__ == '__main__':
 	client = WebClient(token=os.environ['SLACK_TOKEN'])
 
