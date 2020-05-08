@@ -14,7 +14,7 @@ def homepage():
 
 @app.route('/register', methods=['POST'])
 def register():
-	challenge_code : json.loads(request.data.decode("UTF-8"))["challenge"]
+	challenge_code = json.loads(request.data.decode("UTF-8"))["challenge"]
 	return {"challenge" : challenge_code}
 
 if __name__ == '__main__':
