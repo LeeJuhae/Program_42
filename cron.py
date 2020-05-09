@@ -11,10 +11,7 @@ from sqlalchemy import create_engine, text, Table, Column, String, MetaData
 from sqlalchemy.sql import select, column, insert, update
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-REDIRECT_URI = 'http://257246c4.ngrok.io/callback'
-CLIENT_ID="8f45964ae9efeb4d7e19e73b66bf7335a1c878df4629c23e48164701d35e9468"
-CLIENT_SECRET="e7f8f0ff740f3a26eb755f748c81cc36671922ae5bd70cf42b557ce4774f7633"
-
+REDIRECT_URI = 'http://1d105e8f.ngrok.io/callback'
 global scheduler
 
 app = Flask(__name__)
@@ -23,7 +20,21 @@ def register_finish_message(user_id):
 	client = WebClient(token=os.environ['SLACK_TOKEN'])
 	user_id = [user['id'] for user in client.users_list()['members'] if user['id'] == user_id][0]
 	response = client.conversations_open(users=user_id)
-	client.chat_postMessage(channel=response['channel']['id'], text="%s register finish"%user_id, user=user_id)
+	client.chat_postMessage(channel=response['channel']['id'], blocks=[
+			{
+				"type":"divider"
+			},
+			{
+				"type":"section",
+				"text":{
+					"type" : "mrkdwn",
+					"text": ":tada: Connect finished!\n\n평가 시작 15분 전에 알려드릴게요. 편안히 코딩하세요 :pray:"
+				},
+			},
+			{
+				"type":"divider"
+			}
+			])
 	return ""
 
 
@@ -31,7 +42,21 @@ def register_update_message(user_id):
 	client = WebClient(token=os.environ['SLACK_TOKEN'])
 	user_id = [user['id'] for user in client.users_list()['members'] if user['id'] == user_id][0]
 	response = client.conversations_open(users=user_id)
-	client.chat_postMessage(channel=response['channel']['id'], text="%s token update finish"%user_id, user=user_id)
+	client.chat_postMessage(channel=response['channel']['id'], blocks=[
+			{
+				"type":"divider"
+			},
+			{
+				"type":"section",
+				"text":{
+					"type" : "mrkdwn",
+					"text": ":tada: Token reissued!\n\n평가 시작 15분 전에 알려드릴게요. 편안히 코딩하세요 :pray:"
+				},
+			},
+			{
+				"type":"divider"
+			}
+			])
 	return ""
 
 
@@ -61,35 +86,45 @@ def send_scale_message(user_id, scale_info):
 	return ""
 
 
-# def issue_token(register_url, user_id):
-def send_register_btn(url, user_id):
+def send_register_btn(url, user_id, is_update):
 	client = WebClient(token=os.environ['SLACK_TOKEN'])
 	response = client.conversations_open(users=user_id)
-	res = client.chat_postMessage(channel=response['channel']['id'], blocks=[
+	user_name = [user['real_name'] for user in client.users_list()['members'] if user['id'] == user_id][0]
+	if is_update:
+		message = ":exclamation: *Token expired* :exclamation:\nPlease update your intra access-token :)"
+		button_text = "Update token"
+	else:
+		message = ":wave: Hello " + user_name + "!\nPlease connect with Intra account to get your evaluation info :)"
+		button_text = "Connect Intra account"
+	res = client.chat_postMessage(channel=response['channel']['id'], attachments=[
 		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "Please authorize you"
-			}
-		},
-		{
-			"type": "actions",
-			"elements": [
-				{
-					"type": "button",
-					"text": {
-						"type": "plain_text",
-						"emoji": True,
-						"text": "Approve"
-					},
-					"style": "primary",
-					"value": "click_me_123",
-					"url" : url
+			"color": "#000000",
+			"blocks" : [
+			{
+				"type": "section",
+				"text": {
+					"type": "mrkdwn",
+					"text": message
 				}
-			]
-		}
-	])
+			},
+			{
+				"type": "actions",
+				"elements": [
+					{
+						"type": "button",
+						"text": {
+							"type": "plain_text",
+							"emoji": True,
+							"text": button_text
+						},
+						"style": "primary",
+						"value": "click_me_123",
+						"url" : url
+					}
+				]
+			}]
+		}]
+	)
 	return ""
 
 
@@ -136,8 +171,8 @@ def get_insert_query(table, user_id, token):
 def get_token(code, user_id, is_update):
 	post_data = {
 		"grant_type": "authorization_code",
-		"client_id" : CLIENT_ID,
-		"client_secret" : CLIENT_SECRET,
+		"client_id" : os.environ['CLIENT_ID'],
+		"client_secret" : os.environ['CLIENT_SECRET'],
 		"code": code,
 		"redirect_uri": REDIRECT_URI + "?user_id=%s" %user_id + "&update=" + is_update,
 	}
@@ -152,13 +187,12 @@ def get_token(code, user_id, is_update):
 
 def reissue_token(user_id):
 	params = {
-		"client_id": CLIENT_ID,
+		"client_id": os.environ['CLIENT_ID'],
 		"response_type": "code",
 		"redirect_uri": REDIRECT_URI + "?user_id=%s" %user_id + "&update=true",
 	}
 	url = "https://api.intra.42.fr/oauth/authorize?" + urllib.parse.urlencode(params) + "&scope=public%20projects%20profile%20elearning%20tig%20forum"
-	# issue_token(url, user_id)
-	send_register_btn(url, user_id)
+	send_register_btn(url, user_id, is_update=True)
 	# return ""
 
 
@@ -166,13 +200,12 @@ def reissue_token(user_id):
 def register():
 	user_id = request.form['user_id']
 	params = {
-		"client_id": CLIENT_ID,
+		"client_id": os.environ['CLIENT_ID'],
 		"response_type": "code",
 		"redirect_uri": REDIRECT_URI + "?user_id=%s" %user_id + "&update=false",
 	}
 	url = "https://api.intra.42.fr/oauth/authorize?" + urllib.parse.urlencode(params) + "&scope=public%20projects%20profile%20elearning%20tig%20forum"
-	# return issue_token(register_url, user_id)
-	return send_register_btn(url, user_id)
+	return send_register_btn(url, user_id, is_update=False)
 
 
 @app.route('/callback')
@@ -192,7 +225,7 @@ def control_db():
 			return "Error : Not Found access_token "
 
 		session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
-		print("__session___ :",session)
+		# print("__session___ :",session)
 		update_query = get_update_query(auth_info_table, user_id, code)
 		session.execute(update_query)
 		session.commit()
@@ -206,7 +239,7 @@ def control_db():
 			return "Error : Not Found access_token "
 
 		session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
-		print("__session___ :",session)
+		# print("__session___ :",session)
 
 		if session.query(auth_info_table).filter_by(user_id=user_id).all() == []:
 			insert_query = get_insert_query(auth_info_table, user_id, token)
@@ -224,13 +257,17 @@ def control_db():
 
 def scale_cron(access_token, user_id):
 	# req_url = "https://api.intra.42.fr/v2/me/scale_teams/as_corrector"
-	req_url = "https://api.intra.42.fr/v2/users/juhlee/scale_teams"
+	client = WebClient(token=os.environ['SLACK_TOKEN'])
+	user_name = [user['real_name'] for user in client.users_list()['members'] if user['id'] == user_id][0]
+	req_url = "https://api.intra.42.fr/v2/users/" +user_name+"/scale_teams"
+
 	headers = {"Authorization": "Bearer " + access_token}
 	params = {
 		"range[begin_at]" : str(datetime.datetime.utcnow()) + "," + str(datetime.datetime.utcnow() + datetime.timedelta(minutes=15))
 	}
 	# res = requests.get(req_url, headers=headers, params=params)
 	res = requests.get(req_url, headers=headers)
+
 	if len(res.json()) > 0:
 		if str(type(res.json())) == "<class 'dict'>" and res.json()['error'] == 'Not authorized':
 			reissue_token(user_id)
