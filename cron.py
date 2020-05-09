@@ -1,4 +1,3 @@
-
 import datetime
 import pytz
 import time
@@ -8,13 +7,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from slack import WebClient
 from flask import Flask,request, redirect
 import urllib.parse
-from sqlalchemy.sql import select, column
+from sqlalchemy.sql import select, column, insert, update
+from sqlalchemy import create_engine, text, Table, Column, String, MetaData
+from sqlalchemy.orm import sessionmaker, scoped_session
 
-# import test_db
-
-REDIRECT_URI = 'http://f92fd402.ngrok.io/callback'
-CLIENT_ID="2451a2427184f294a2ec8809755643ddbee64c1603d20b152bc5afc343c3c2fa"
-CLIENT_SECRET="846d0c3279a8eee15b55c571d55fb00f5123c856f6e014e8264c911f2a97a603"
+REDIRECT_URI = 'http://257246c4.ngrok.io/callback'
+CLIENT_ID="8f45964ae9efeb4d7e19e73b66bf7335a1c878df4629c23e48164701d35e9468"
+CLIENT_SECRET="e7f8f0ff740f3a26eb755f748c81cc36671922ae5bd70cf42b557ce4774f7633"
 
 app = Flask(__name__)
 
@@ -102,6 +101,7 @@ def get_token(code, user_id, is_update):
 		print("Not Found access_token!")
 		return None
 
+
 @app.route('/callback')
 def db_insert():
 	user_id = request.args.get('user_id')
@@ -115,11 +115,13 @@ def db_insert():
 		if token == None:
 			return "Error : Not Found access_token "
 
-		trans= connection.begin()
-		update_query = "UPDATE auth SET auth.token = %s WHERE auth.user_id=%s"
-		update_info = (token, user_id)
-		connection.execute(update_query, update_info)
-		trans.commit()
+		session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+		print("__session___ :",session)
+		u = update(t)
+		u = u.values({"token": token})
+		u = u.where(t.c.id == user_id)
+		session.execute(u)
+		session.commit()
 
 		register_update_message(user_id)
 		scale_cron(token, user_id)
@@ -127,17 +129,21 @@ def db_insert():
 		token = get_token(code, user_id, is_update="false")
 		if token == None:
 			return "Error : Not Found access_token "
-		query =select([t]).where(t.columns.user_id == '%s' %user_id)
-		if connection.execute(query).fetchall() == []:
+		session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+		print("__session___ :",session)
 
-			trans = connection.begin()
-			connection.execute(t.insert(), user_id=user_id,token=token)
-			trans.commit()
+		if session.query(t).filter_by(user_id=user_id).all() == []:
+
+			i = insert(t)
+			i = i.values({"user_id": user_id, "token": token})
+			session.execute(i)
+			session.commit()
 
 			call_addjob(token, user_id)
 			register_finish_message(user_id)
 			return "got a code! %s\n And token is %s" % (code, token)
 		else:
+			session.commit()
 			return "Already token exist!"
 
 def send_scale_message(user_id, scale_info):
@@ -192,7 +198,6 @@ def get_scale_info(scale_dict, access_token):
 	scale_info['평가할 프로젝트'] = scale_dict["team"]["project_gitlab_path"].split("/")[-1]
 	return scale_info
 
-
 def scale_cron(access_token, user_id):
 	# req_url = "https://api.intra.42.fr/v2/me/scale_teams/as_corrector"
 	req_url = "https://api.intra.42.fr/v2/users/juhlee/scale_teams"
@@ -210,33 +215,30 @@ def scale_cron(access_token, user_id):
 			scale_info = get_scale_info(scale_dict, access_token)
 			send_scale_message(user_id, scale_info)
 
-from sqlalchemy import create_engine, text, Table, Column, String, MetaData
+def call_addjob(token, user_id):
+	scheduler.add_job(scale_cron,'cron', second="*/10", args=[token, user_id])
+	# scheduler.add_job(scale_cron,'cron', minute="*/5", args=[token, user_id])
+
 def db_conn():
 	app.config.from_pyfile("config.py")
+	# engine = create_engine(app.config['DB_URL'], encoding = 'utf-8', max_overflow = 0)
+	engine = create_engine(app.config['DB_URL'], encoding = 'utf-8', convert_unicode=False, pool_size=20, pool_recycle=500, max_overflow=20)
 
-	engine = create_engine(app.config['DB_URL'], encoding = 'utf-8', max_overflow = 0)
 	meta = MetaData()
 	t = Table(
 		'auth', meta,
 		Column('user_id',String(20), primary_key=True),
 		Column('token',String(64)),
 	)
-
 	meta.create_all(engine)
 
-	connection = engine.connect()
-
+	return t, engine
+	# connection = engine.connect()
 	# trans = connection.begin()
+	# return t, connection
 
-	return t, connection
 
 global scheduler
-global t
-global connection
-global trnas
-def call_addjob(token, user_id):
-	scheduler.add_job(scale_cron,'cron', second="*/10", args=[token, user_id])
-	# scheduler.add_job(scale_cron,'cron', minute="*/5", args=[token, user_id])
 
 if __name__ == '__main__':
 	scheduler = BackgroundScheduler()
@@ -245,7 +247,8 @@ if __name__ == '__main__':
 	# app.run(debug=True, port=65010)
 
 	try:
-		t, connection = db_conn()
+		t, engine = db_conn()
+		db_conn()
 		# call_addjob("3b357184eccbb17ed53ee688b065f04f57896e33035e8b89477ed81167b1f831","U012M8XEHJB")
 		app.run(debug=True, port=65010, use_reloader=False)
 
@@ -255,3 +258,5 @@ if __name__ == '__main__':
 		scheduler.shutdown()
 
 
+
+# class t():
