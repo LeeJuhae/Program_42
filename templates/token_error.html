@@ -1,25 +1,26 @@
 <!DOCTYPE HTML>
-<!--
-	Overflow by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
 <html>
 	<head>
 		<title>42scale_bot</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="{{url_for('static', filename='assets/css/main.css')}}" />
 		<link rel="icon" type="image/png" sizes="16x16" href="https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg">
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<noscript><link rel="stylesheet" href="{{url_for('static', filename='assets/css/noscript.css')}}" /></noscript>
+		<script src="{{url_for('static', filename='assets/js/jquery.scrolly.min.js')}}"></script>
+		<script src="{{url_for('static', filename='assets/js/jquery.poptrox.min.js')}}"></script>
+		<script src="{{url_for('static', filename='assets/js/browser.min.js')}}"></script>
+		<script src="{{url_for('static', filename='assets/js/breakpoints.min.js')}}"></script>
+		<script src="{{url_for('static', filename='assets/js/util.js')}}"></script>
+		<script src="{{url_for('static', filename='assets/js/main.js')}}"></script>
 	</head>
-	<body class="is-preload">
-		<!-- Header -->
+	<body>
 		<section id="header">
 			<header>
 				<img src="https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg" width="100px"></img>
 				<h1>Token Error!</h1>
 				<p>Are you 42 student?</p>
+				<p></p>
 			</header>
 			</p>
 				<div style="text-align:center; vertical-align:middle;">
@@ -28,13 +29,5 @@
 					<input type="button" value="Close" style="WIDTH: 300pt; HEIGHT: 50pt;padding:4px" onClick="window.close()">
 				</div>
 		</section>
-		<!-- Scripts>-->
-			 <script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/jquery.poptrox.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
 	</body>
 </html>
