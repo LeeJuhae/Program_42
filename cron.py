@@ -158,7 +158,7 @@ def get_scale_info(scale_dict, access_token):
 def get_update_query(table, user_id, token):
 	update_query = update(table)
 	update_query = update_query.values({"token": token})
-	update_query = update_query.where(table.c.id == user_id)
+	update_query = update_query.where(table.c.user_id == user_id)
 	return update_query
 
 
@@ -232,6 +232,7 @@ def control_db():
 
 		register_update_message(user_id)
 		scale_cron(token, user_id)
+		return ""
 
 	else:
 		token = get_token(code, user_id, is_update="false")
@@ -278,8 +279,7 @@ def scale_cron(access_token, user_id):
 
 
 def call_addjob(token, user_id):
-	scheduler.add_job(scale_cron,'cron', second="*/10", args=[token, user_id])
-	# scheduler.add_job(scale_cron,'cron', minute="*/5", args=[token, user_id])
+	scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[token, user_id])
 
 
 def connect_db():
@@ -300,14 +300,8 @@ def connect_db():
 if __name__ == '__main__':
 	scheduler = BackgroundScheduler()
 	scheduler.start()
-	# call_addjob("3b357184eccbb17ed53ee688b065f04f57896e33035e8b89477ed81167b1f831","U0138U104UR")
-	# app.run(debug=True, port=65010)
 	try:
 		auth_info_table, engine = connect_db()
-		# call_addjob("3b357184eccbb17ed53ee688b065f04f57896e33035e8b89477ed81167b1f831","U012M8XEHJB")
 		app.run(debug=True, port=65010, use_reloader=False)
-
-	# 	while(True):
-	# 		time.sleep(2)
 	except (KeyboardInterrupt, SystemExit):
 		scheduler.shutdown()
