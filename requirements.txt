@@ -3,6 +3,7 @@ python3
 mysql-connector
 mysql-connector-python
 apscheduler
+pytz
 slack
 slackclient
 setuptools
