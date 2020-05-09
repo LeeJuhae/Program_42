@@ -6,7 +6,7 @@ import requests
 import urllib.parse
 from apscheduler.schedulers.background import BackgroundScheduler
 from slack import WebClient
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, render_template
 from sqlalchemy import create_engine, text, Table, Column, String, MetaData
 from sqlalchemy.sql import select, column, insert, update
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -14,7 +14,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 REDIRECT_URI = 'http://1d105e8f.ngrok.io/callback'
 global scheduler
 
-app = Flask(__name__)
+app = Flask(__name__,template_folder="templates")
 
 def register_finish_message(user_id):
 	client = WebClient(token=os.environ['SLACK_TOKEN'])
@@ -63,7 +63,7 @@ def register_update_message(user_id):
 def send_scale_message(user_id, scale_info):
 	client = WebClient(token=os.environ['SLACK_TOKEN'])
 	response = client.conversations_open(users=user_id)
-	scale_text = ":alarm_clock: :runner:  *평가가 왔어요*  :runner: :alarm_clock:\n\n"
+	scale_text = ":fire: :runner:  *평가가 왔어요*  :runner: :fire:\n\n"
 	for i,(k,v) in enumerate(scale_info.items()):
 		scale_text += k
 		scale_text += " : *"
@@ -181,7 +181,6 @@ def get_token(code, user_id, is_update):
 	if "access_token" in token_json.keys():
 		return token_json["access_token"]
 	else:
-		print("Not Found access_token!")
 		return None
 
 
@@ -193,8 +192,6 @@ def reissue_token(user_id):
 	}
 	url = "https://api.intra.42.fr/oauth/authorize?" + urllib.parse.urlencode(params) + "&scope=public%20projects%20profile%20elearning%20tig%20forum"
 	send_register_btn(url, user_id, is_update=True)
-	# return ""
-
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -209,7 +206,6 @@ def register():
 
 
 @app.route('/callback')
-# def db_insert():
 def control_db():
 	error = request.args.get('error', '')
 	if error:
@@ -222,25 +218,24 @@ def control_db():
 	if is_update == "true":
 		token = get_token(code, user_id, is_update="true")
 		if token == None:
-			return "Error : Not Found access_token "
+			return render_template("token_error.html")
 
 		session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
-		# print("__session___ :",session)
 		update_query = get_update_query(auth_info_table, user_id, code)
 		session.execute(update_query)
 		session.commit()
 
 		register_update_message(user_id)
 		scale_cron(token, user_id)
-		return ""
+		scheduler.modify_job(user_id, args=[token, user_id])
+		return render_template("token_reissued.html")
 
 	else:
 		token = get_token(code, user_id, is_update="false")
 		if token == None:
-			return "Error : Not Found access_token "
+			return render_template("token_error.html")
 
 		session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
-		# print("__session___ :",session)
 
 		if session.query(auth_info_table).filter_by(user_id=user_id).all() == []:
 			insert_query = get_insert_query(auth_info_table, user_id, token)
@@ -249,25 +244,22 @@ def control_db():
 
 			call_addjob(token, user_id)
 			register_finish_message(user_id)
-			return "got a code! %s\n And token is %s" % (code, token)
+
+			return render_template("token_issued.html")
 
 		else:
 			session.commit()
-			return "Already token exist!"
+			return render_template("token_already.html")
 
 
 def scale_cron(access_token, user_id):
-	# req_url = "https://api.intra.42.fr/v2/me/scale_teams/as_corrector"
-	client = WebClient(token=os.environ['SLACK_TOKEN'])
-	user_name = [user['real_name'] for user in client.users_list()['members'] if user['id'] == user_id][0]
-	req_url = "https://api.intra.42.fr/v2/users/" +user_name+"/scale_teams"
+	req_url = "https://api.intra.42.fr/v2/me/scale_teams/as_corrector"
 
 	headers = {"Authorization": "Bearer " + access_token}
 	params = {
 		"range[begin_at]" : str(datetime.datetime.utcnow()) + "," + str(datetime.datetime.utcnow() + datetime.timedelta(minutes=15))
 	}
-	# res = requests.get(req_url, headers=headers, params=params)
-	res = requests.get(req_url, headers=headers)
+	res = requests.get(req_url, headers=headers, params=params)
 
 	if len(res.json()) > 0:
 		if str(type(res.json())) == "<class 'dict'>" and res.json()['error'] == 'Not authorized':
@@ -279,8 +271,7 @@ def scale_cron(access_token, user_id):
 
 
 def call_addjob(token, user_id):
-	scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[token, user_id])
-
+	scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[token, user_id], id=user_id)
 
 def connect_db():
 	app.config.from_pyfile("config.py")
