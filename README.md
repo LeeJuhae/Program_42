@@ -60,7 +60,13 @@ ___
 
 ![diagram](img/diagram.png)
 
+### 작업 흐름 /  Workflow
 
+![workflow](img/workflow.png)
+
+![how_to_send_a_msg](img/how_to_send_a_msg.png)
+
+![token_expired](img/token_expired.png)
 
 ### 팀 소개 및 역할 분담 / Introducing our Team
 
