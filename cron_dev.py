@@ -11,7 +11,7 @@ from sqlalchemy import create_engine, text, Table, Column, String, MetaData
 from sqlalchemy.sql import select, column, insert, update
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-REDIRECT_URI = 'http://1d105e8f.ngrok.io/callback'
+REDIRECT_URI = 'http://0118302f.ngrok.io/callback'
 global scheduler
 
 app = Flask(__name__,template_folder="templates")
@@ -191,7 +191,7 @@ def reissue_token(user_id):
 		"response_type": "code",
 		"redirect_uri": REDIRECT_URI + "?user_id=%s" %user_id + "&update=true",
 	}
-	url = "https://api.intra.42.fr/oauth/authorize?" + urllib.parse.urlencode(params) + "&scope=public%20projects%20profile%20elearning%20tig%20forum"
+	url = "https://api.intra.42.fr/oauth/authorize?" + urllib.parse.urlencode(params) + "&scope=public%20projects"
 	send_register_btn(url, user_id, is_update=True)
 	# return ""
 
@@ -204,7 +204,7 @@ def register():
 		"response_type": "code",
 		"redirect_uri": REDIRECT_URI + "?user_id=%s" %user_id + "&update=false",
 	}
-	url = "https://api.intra.42.fr/oauth/authorize?" + urllib.parse.urlencode(params) + "&scope=public%20projects%20profile%20elearning%20tig%20forum"
+	url = "https://api.intra.42.fr/oauth/authorize?" + urllib.parse.urlencode(params) + "&scope=public%20projects"
 	return send_register_btn(url, user_id, is_update=False)
 
 
@@ -257,18 +257,18 @@ def control_db():
 
 
 def scale_cron(access_token, user_id):
-	# req_url = "https://api.intra.42.fr/v2/me/scale_teams/as_corrector"
-	client = WebClient(token=os.environ['SLACK_TOKEN'])
-	user_name = [user['real_name'] for user in client.users_list()['members'] if user['id'] == user_id][0]
-	req_url = "https://api.intra.42.fr/v2/users/" +user_name+"/scale_teams"
+	req_url = "https://api.intra.42.fr/v2/me/scale_teams/as_corrector"
+	# client = WebClient(token=os.environ['SLACK_TOKEN'])
+	# user_name = [user['real_name'] for user in client.users_list()['members'] if user['id'] == user_id][0]
+	# req_url = "https://api.intra.42.fr/v2/users/" +user_name+"/scale_teams"
 
 	headers = {"Authorization": "Bearer " + access_token}
 	params = {
 		"range[begin_at]" : str(datetime.datetime.utcnow()) + "," + str(datetime.datetime.utcnow() + datetime.timedelta(minutes=15))
 	}
-	# res = requests.get(req_url, headers=headers, params=params)
-	res = requests.get(req_url, headers=headers)
-
+	res = requests.get(req_url, headers=headers, params=params)
+	# res = requests.get(req_url, headers=headers)
+	print(res.text)
 	if len(res.json()) > 0:
 		if str(type(res.json())) == "<class 'dict'>" and res.json()['error'] == 'Not authorized':
 			reissue_token(user_id)
@@ -279,7 +279,7 @@ def scale_cron(access_token, user_id):
 
 
 def call_addjob(token, user_id):
-	scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[token, user_id])
+	scheduler.add_job(scale_cron,'cron', second="*/10", args=[token, user_id])
 
 
 def connect_db():
