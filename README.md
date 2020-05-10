@@ -8,19 +8,20 @@
 
 
 
-### 기획 의도 /Intention of Project
+## 기획 의도 /Intention of Project
 
-___
 
 평가 잡힌 사실을 모른채 다른 일에 집중하다 평가에 늦은 적도, 평가 해주시는 분이 평가를 잊으셔 정해진 평가 시간 보다 늦게 평가를 받은 적도 있어요.
 
 평가가 잡혔는지 확인하기 위해 intra 넷을 새로고침 하던 과거를 잊고 싶어 기획하게 되었어요.
 
 
+## 시연 영상 링크
 
-###  사용 방법 / Usage
+[42scale_bot 시연 영상](https://youtu.be/OP4kI4VN1nI)
 
-___
+##  사용 방법 / Usage
+
 
 1.  Workspace에 42seoul 이메일(```<your-id>@student.42seoul.kr```)로 참여하세요.
 
@@ -44,23 +45,19 @@ ___
 
 
 
-### 사용 대상 / Target User
+## 사용 대상 / Target User
 
-___
 
 42scalbot은 42 student를 위해 만들어졌어요.
 
 
 
- ### 다이어그램 / Diagram
-
-___
-
-
+ ## 다이어그램 / Diagram
 
 ![diagram](img/diagram.png)
 
-### 작업 흐름 /  Workflow
+
+## 작업 흐름 /  Workflow
 
 ![workflow](img/workflow.png)
 
@@ -68,7 +65,8 @@ ___
 
 ![token_expired](img/token_expired.png)
 
-### 팀 소개 및 역할 분담 / Introducing our Team
+
+## 팀 소개 및 역할 분담 / Introducing our Team
 
 ___
 
@@ -85,10 +83,7 @@ ___
   - 서버
 
 
-
-### 개발 환경 / Development Environment
-
-____
+## 개발 환경 / Development Environment
 
 - Language : python3, HTML, CSS
 
@@ -97,10 +92,7 @@ ____
 - Databse : MySQL
 
 
-
-### 협업 도구 / Collaboration Tools
-
----
+## 협업 도구 / Collaboration Tools
 
 - Slack
 
@@ -109,20 +101,16 @@ ____
 - Offline Meeting
 
 
+## 개발하며 배운 것들
 
-### 개발하며 배운 것들
-
----
 
 ```slack bot``` 	```oauth```	```cronjob``` 	```flask```	```mysql```	```sqlalchemy```	```utc/timestamp```
 
 ```transaction/session```	```html/css```	```API사용법``` 	```ngrok```
 
 
+## 참고 API / Using API Refrence
 
-### 참고 API / Using API Refrence
-
----
 
 - slack API : https://api.slack.com/
 - intra API : https://api.intra.42.fr/apidoc
