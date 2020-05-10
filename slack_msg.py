@@ -1,7 +1,6 @@
 import os
 from slack import WebClient
 
-# def register_finish_message(user_id):
 def send_register_finish_msg(user_id):
 	client = WebClient(token=os.environ['SLACK_TOKEN'])
 	user_id = [user['id'] for user in client.users_list()['members'] if user['id'] == user_id][0]
@@ -24,7 +23,6 @@ def send_register_finish_msg(user_id):
 	return ""
 
 
-# def register_update_message(user_id):
 def send_register_update_msg(user_id):
 	client = WebClient(token=os.environ['SLACK_TOKEN'])
 	user_id = [user['id'] for user in client.users_list()['members'] if user['id'] == user_id][0]
@@ -50,7 +48,7 @@ def send_register_update_msg(user_id):
 def send_scale_message(user_id, scale_info):
 	client = WebClient(token=os.environ['SLACK_TOKEN'])
 	response = client.conversations_open(users=user_id)
-	scale_text = ":alarm_clock: :runner:  *평가가 왔어요*  :runner: :alarm_clock:\n\n"
+	scale_text = ":fire: :runner:  *평가가 왔어요*  :runner: :fire:\n\n"
 	for i,(k,v) in enumerate(scale_info.items()):
 		scale_text += k
 		scale_text += " : *"
