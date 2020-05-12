@@ -18,7 +18,7 @@
 
 ## > 시연 영상 링크
 
-[42scale_bot 시연 영상](https://youtu.be/OP4kI4VN1nI)
+[42scale_bot 시연 영상](https://youtu.be/NIMVpoDA8C8)
 
 
 
