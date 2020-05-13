@@ -1,6 +1,6 @@
 # 42scalebot [ 부제 : 혹시.. 어디세요? ]
 
-#### 동료 평가 15분 전 평가할 동료의 정보를 슬랙으로 알려주는 봇이에요!
+#### 동료 평가 15분 전 평가할 동료의 정보를 슬랙으로 알려주는 봇이에요!🤖
 
 #### 더이상 평가가 잡혔는지 확인하기 위해 intra 넷에 접속하지 않아도 돼요.
 
@@ -8,9 +8,7 @@
 
 
 
-### 기획 의도 /Intention of Project
-
-___
+## > 기획 의도 /Intention of Project
 
 평가 잡힌 사실을 모른채 다른 일에 집중하다 평가에 늦은 적도, 평가 해주시는 분이 평가를 잊으셔 정해진 평가 시간 보다 늦게 평가를 받은 적도 있어요.
 
@@ -18,11 +16,17 @@ ___
 
 
 
-###  사용 방법 / Usage
+## > 시연 영상 링크
 
-___
+[42scale_bot 시연 영상](https://youtu.be/NIMVpoDA8C8)
 
-1.  Workspace에 42seoul 이메일(```<your-id>@student.42seoul.kr```)로 참여하세요.
+
+
+## > 사용 방법 / Usage
+
+
+1.  Workspace에 42seoul 이메일(```<your-id>@student.42seoul.kr```)로 참여하세요. 
+(참여를 원하시는 분은 juhlee 또는 jushin에게 slack dm 보내주세요!)
 
 2. 채팅 창에 ```/register```를 입력하세요.
 
@@ -44,23 +48,20 @@ ___
 
 
 
-### 사용 대상 / Target User
+## > 사용 대상 / Target User
 
-___
 
 42scalbot은 42 student를 위해 만들어졌어요.
 
 
 
- ### 다이어그램 / Diagram
-
-___
-
-
+ ## > 다이어그램 / Diagram
 
 ![diagram](img/diagram.png)
 
-### 작업 흐름 /  Workflow
+
+
+## > 작업 흐름 /  Workflow
 
 ![workflow](img/workflow.png)
 
@@ -68,9 +69,10 @@ ___
 
 ![token_expired](img/token_expired.png)
 
-### 팀 소개 및 역할 분담 / Introducing our Team
 
-___
+
+## > 팀 소개 및 역할 분담 / Introducing our Team
+
 
 - juhlee
 
@@ -85,10 +87,7 @@ ___
   - 서버
 
 
-
-### 개발 환경 / Development Environment
-
-____
+## > 개발 환경 / Development Environment
 
 - Language : python3, HTML, CSS
 
@@ -98,9 +97,7 @@ ____
 
 
 
-### 협업 도구 / Collaboration Tools
-
----
+## > 협업 도구 / Collaboration Tools
 
 - Slack
 
@@ -110,9 +107,8 @@ ____
 
 
 
-### 개발하며 배운 것들
+## > 개발하며 배운 것들
 
----
 
 ```slack bot``` 	```oauth```	```cronjob``` 	```flask```	```mysql```	```sqlalchemy```	```utc/timestamp```
 
@@ -120,9 +116,8 @@ ____
 
 
 
-### 참고 API / Using API Refrence
+## > 참고 API / Using API Refrence
 
----
 
 - slack API : https://api.slack.com/
 - intra API : https://api.intra.42.fr/apidoc
