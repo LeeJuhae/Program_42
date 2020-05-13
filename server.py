@@ -14,7 +14,7 @@ REDIRECT_URI = 'http://0118302f.ngrok.io/callback'
 global scheduler
 
 app = Flask(__name__,template_folder="templates")
-app.config.from_pyfile("config.py")
+# app.config.from_pyfile("config.py")
 
 def get_token(code, user_id, is_update):
 	post_data = {
