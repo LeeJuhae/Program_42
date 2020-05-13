@@ -9,7 +9,7 @@ from msg_contents import *
 from slack_msg import *
 from cron import *
 
-REDIRECT_URI = 'http://0118302f.ngrok.io/callback'
+REDIRECT_URI = 'https://dry-shore-10386.herokuapp.com/callback'
 
 global scheduler
 
