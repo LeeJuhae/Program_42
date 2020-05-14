@@ -10,8 +10,6 @@ from slack_msg import *
 from cron import *
 
 REDIRECT_URI = 'https://dry-shore-10386.herokuapp.com/callback'
-global scheduler
-global engine
 
 app = Flask(__name__,template_folder="templates")
 # app.config.from_pyfile("config.py")
@@ -57,9 +55,6 @@ def register():
 
 @app.route('/callback')
 def callback():
-	global scheduler
-	global engine
-
 	error = request.args.get('error', '')
 	if error:
 		return "Error: " + error
@@ -104,9 +99,6 @@ def callback():
 
 
 if __name__ == '__main__':
-	global scheduler
-	global engine
-
 	scheduler = BackgroundScheduler()
 	scheduler.start()
 	auth_info_table, engine = connect_db()
