@@ -12,6 +12,9 @@ from cron import *
 REDIRECT_URI = 'https://dry-shore-10386.herokuapp.com/callback'
 
 app = Flask(__name__,template_folder="templates")
+scheduler = BackgroundScheduler()
+scheduler.start()
+auth_info_table, engine = connect_db()
 # app.config.from_pyfile("config.py")
 # global scheduler
 # global auth_info_table
@@ -61,9 +64,6 @@ def register():
 
 @app.route('/callback')
 def callback():
-	global scheduler
-	global auth_info_table
-	global engine
 	error = request.args.get('error', '')
 	if error:
 		return "Error: " + error
@@ -76,6 +76,7 @@ def callback():
 	if token == None:
 		return render_template("token_error.html")
 
+	global engine
 	session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 	if is_update == "true":
@@ -108,13 +109,6 @@ def callback():
 
 
 if __name__ == '__main__':
-	global scheduler
-	global auth_info_table
-	global engine
-	scheduler = BackgroundScheduler()
-	scheduler.start()
-	auth_info_table, engine = connect_db()
-
 	try:
 		# auth_info_table, engine = connect_db(app)
 #		app.run(debug=True, port=65010, use_reloader=False)
