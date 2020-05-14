@@ -103,11 +103,10 @@ def callback():
 if __name__ == '__main__':
 	scheduler = BackgroundScheduler()
 	scheduler.start()
-	scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=["32551b45f6003b14ca54995f023f8043379ea004cfa212632f2fc561169d5c22", "U013CE0B23C"], id="U013CE0B23C")
-	scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=["46ac2d041776f168224a8fa340529b0fc7e5ed6a0dd8ec95b1e27257ccc0b19e", "U013JKBRKQC"], id="U013JKBRKQC")
 
 	try:
 		auth_info_table, engine = connect_db(app)
-		app.run(debug=True, port=65010, use_reloader=False)
+#		app.run(debug=True, port=65010, use_reloader=False)
+		app.run()
 	except (KeyboardInterrupt, SystemExit):
-		scheduler.shutdown()
+
