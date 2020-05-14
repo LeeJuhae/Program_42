@@ -12,7 +12,7 @@ from cron import *
 REDIRECT_URI = 'https://dry-shore-10386.herokuapp.com/callback'
 
 global scheduler
-
+global engine
 app = Flask(__name__,template_folder="templates")
 # app.config.from_pyfile("config.py")
 
