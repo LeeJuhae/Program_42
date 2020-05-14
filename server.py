@@ -106,7 +106,8 @@ if __name__ == '__main__':
 	scheduler.start()
 
 	try:
-		auth_info_table, engine = connect_db(app)
+		# auth_info_table, engine = connect_db(app)
+		auth_info_table = connect_db()
 #		app.run(debug=True, port=65010, use_reloader=False)
 		app.run()
 	except (KeyboardInterrupt, SystemExit):
