@@ -16,9 +16,6 @@ def connect_db():
 		Column('token',String(64)),
 	)
 	meta.create_all(engine)
-	print("!!!!!!!!!!!!!!!!!\n")
-	print(engine)
-	print("!!!!!!!!!!!!!!!!!\n")
 	# return auth_info_table
 	return auth_info_table, engine
 
