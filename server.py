@@ -105,7 +105,16 @@ if __name__ == '__main__':
 	scheduler.start()
 
 	try:
-		auth_info_table, engine = connect_db(app)
+		# auth_info_table, engine = connect_db(app)
+		from sqlalchemy import create_engine, text, Table, Column, String, MetaData
+		engine = create_engine(os.environ['CLEARDB_DATABASE_URL'], encoding = 'utf-8', convert_unicode=False, pool_size=20, pool_recycle=500, max_overflow=20)
+		meta = MetaData()
+		auth_info_table = Table(
+			'auth', meta,
+			Column('user_id',String(20), primary_key=True),
+			Column('token',String(64)),
+		)
+		meta.create_all(engine)
 #		app.run(debug=True, port=65010, use_reloader=False)
 		app.run()
 	except (KeyboardInterrupt, SystemExit):
