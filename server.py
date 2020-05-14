@@ -15,13 +15,6 @@ app = Flask(__name__,template_folder="templates")
 scheduler = BackgroundScheduler()
 scheduler.start()
 auth_info_table, engine = connect_db()
-# app.config.from_pyfile("config.py")
-# global scheduler
-# global auth_info_table
-# global engine
-# scheduler = None
-# auth_info_table = None
-# engine = None
 
 def get_token(code, user_id, is_update):
 	post_data = {
@@ -110,8 +103,6 @@ def callback():
 
 if __name__ == '__main__':
 	try:
-		# auth_info_table, engine = connect_db(app)
-#		app.run(debug=True, port=65010, use_reloader=False)
 		app.run()
 	except (KeyboardInterrupt, SystemExit):
 		print("bye")

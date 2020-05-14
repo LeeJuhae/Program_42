@@ -112,7 +112,7 @@
 
 ```slack bot``` 	```oauth```	```cronjob``` 	```flask```	```mysql```	```sqlalchemy```	```utc/timestamp```
 
-```transaction/session```	```html/css```	```API사용법``` 	```ngrok```
+```transaction/session```	```html/css```	```API사용법``` 	```ngrok```     ```heroku```
 
 
 

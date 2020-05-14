@@ -2,12 +2,11 @@ from sqlalchemy.sql import insert, update
 from sqlalchemy import create_engine, text, Table, Column, String, MetaData
 from flask import Flask, request, redirect, render_template
 import os
-#import config
 
 def connect_db():
-# def connect_db(app):
 	engine = create_engine(os.environ['CLEARDB_DATABASE_URL'], encoding = 'utf-8', convert_unicode=False, pool_size=20, pool_recycle=500, max_overflow=20)
-#	engine = create_engine(config.DB_URL, encoding = 'utf-8', convert_unicode=False, pool_size=20, pool_recycle=500, max_overflow=20)
+	# debug mode
+	# engine = create_engine(config.DB_URL, encoding = 'utf-8', convert_unicode=False, pool_size=20, pool_recycle=500, max_overflow=20)
 
 	meta = MetaData()
 	auth_info_table = Table(
@@ -16,7 +15,6 @@ def connect_db():
 		Column('token',String(64)),
 	)
 	meta.create_all(engine)
-	# return auth_info_table
 	return auth_info_table, engine
 
 
