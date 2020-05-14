@@ -58,6 +58,9 @@ def register():
 
 @app.route('/callback')
 def callback():
+	global scheduler
+	global auth_info_table
+	global engine
 	error = request.args.get('error', '')
 	if error:
 		return "Error: " + error
