@@ -11,9 +11,6 @@ from cron import *
 
 REDIRECT_URI = 'https://dry-shore-10386.herokuapp.com/callback'
 
-scheduler = None
-engine = None
-
 app = Flask(__name__,template_folder="templates")
 # app.config.from_pyfile("config.py")
 
