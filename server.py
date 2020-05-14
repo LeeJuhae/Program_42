@@ -58,6 +58,9 @@ def register():
 
 @app.route('/callback')
 def callback():
+	global scheduler
+	global engine
+
 	error = request.args.get('error', '')
 	if error:
 		return "Error: " + error
@@ -69,7 +72,7 @@ def callback():
 	token = get_token(code, user_id, is_update=is_update)
 	if token == None:
 		return render_template("token_error.html")
-	global engine
+
 	session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 	if is_update == "true":
@@ -81,7 +84,6 @@ def callback():
 
 		send_register_update_msg(user_id)
 		scale_cron(token, user_id)
-		global scheduler
 		scheduler.modify_job(user_id, args=[token, user_id])
 		return render_template("token_reissued.html")
 
@@ -92,7 +94,6 @@ def callback():
 			session.commit()
 			session.close()
 
-			global scheduler
 			scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[token, user_id], id=user_id)
 			send_register_finish_msg(user_id)
 			return render_template("token_issued.html")
@@ -105,9 +106,10 @@ def callback():
 
 if __name__ == '__main__':
 	global scheduler
+	global engine
+
 	scheduler = BackgroundScheduler()
 	scheduler.start()
-	global engine
 	auth_info_table, engine = connect_db()
 
 	try:
