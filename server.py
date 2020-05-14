@@ -102,6 +102,9 @@ def callback():
 
 
 if __name__ == '__main__':
+	global scheduler
+	global auth_info_table
+	global engine
 	scheduler = BackgroundScheduler()
 	scheduler.start()
 	auth_info_table, engine = connect_db()
