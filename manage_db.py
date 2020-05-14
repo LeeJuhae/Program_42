@@ -2,7 +2,6 @@ from sqlalchemy.sql import insert, update
 from sqlalchemy import create_engine, text, Table, Column, String, MetaData
 from flask import Flask, request, redirect, render_template
 import os
-from server import engine
 #import config
 
 def connect_db():
@@ -17,8 +16,8 @@ def connect_db():
 		Column('token',String(64)),
 	)
 	meta.create_all(engine)
-	return auth_info_table
-	# return auth_info_table, engine
+	# return auth_info_table
+	return auth_info_table, engine
 
 
 def get_update_query(table, user_id, token):

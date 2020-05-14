@@ -11,8 +11,8 @@ from cron import *
 
 REDIRECT_URI = 'https://dry-shore-10386.herokuapp.com/callback'
 
-global scheduler
-global engine
+# global scheduler
+# global engine
 
 app = Flask(__name__,template_folder="templates")
 # app.config.from_pyfile("config.py")
@@ -81,6 +81,7 @@ def callback():
 
 		send_register_update_msg(user_id)
 		scale_cron(token, user_id)
+		global scheduler
 		scheduler.modify_job(user_id, args=[token, user_id])
 		return render_template("token_reissued.html")
 
@@ -91,6 +92,7 @@ def callback():
 			session.commit()
 			session.close()
 
+			global scheduler
 			scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[token, user_id], id=user_id)
 			send_register_finish_msg(user_id)
 			return render_template("token_issued.html")
@@ -102,12 +104,14 @@ def callback():
 
 
 if __name__ == '__main__':
+	global scheduler
 	scheduler = BackgroundScheduler()
 	scheduler.start()
+	global engine
+	auth_info_table, engine = connect_db()
 
 	try:
 		# auth_info_table, engine = connect_db(app)
-		auth_info_table = connect_db()
 #		app.run(debug=True, port=65010, use_reloader=False)
 		app.run()
 	except (KeyboardInterrupt, SystemExit):
