@@ -109,4 +109,4 @@ if __name__ == '__main__':
 #		app.run(debug=True, port=65010, use_reloader=False)
 		app.run()
 	except (KeyboardInterrupt, SystemExit):
-
+                print("bye")
