@@ -13,6 +13,9 @@ REDIRECT_URI = 'https://dry-shore-10386.herokuapp.com/callback'
 
 app = Flask(__name__,template_folder="templates")
 # app.config.from_pyfile("config.py")
+# global scheduler
+# global auth_info_table
+# global engine
 # scheduler = None
 # auth_info_table = None
 # engine = None
