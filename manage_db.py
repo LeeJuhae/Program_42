@@ -4,8 +4,8 @@ from flask import Flask, request, redirect, render_template
 import os
 
 def connect_db():
-	engine = create_engine(os.environ['CLEARDB_DATABASE_URL'], encoding = 'utf-8', convert_unicode=False, pool_size=20, pool_recycle=500, max_overflow=20)
-	# debug mode
+	engine = create_engine(os.environ['CLEARDB_DATABASE_URL'], encoding = 'utf-8', convert_unicode=False, pool_size=20, pool_recycle=-1, max_overflow=20)
+	# debug
 	# engine = create_engine(config.DB_URL, encoding = 'utf-8', convert_unicode=False, pool_size=20, pool_recycle=500, max_overflow=20)
 
 	meta = MetaData()
