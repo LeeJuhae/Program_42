@@ -1,2 +1,2 @@
 web: gunicorn server:app
-clock: python server.py
+clock: python3 cron.py

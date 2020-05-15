@@ -1,6 +1,6 @@
 import requests
 import urllib.parse
-from apscheduler.schedulers.background import BackgroundScheduler
+# from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request, redirect, render_template
 from sqlalchemy.orm import sessionmaker, scoped_session
 
@@ -12,8 +12,6 @@ from cron import *
 REDIRECT_URI = 'https://dry-shore-10386.herokuapp.com/callback'
 
 app = Flask(__name__,template_folder="templates")
-scheduler = BackgroundScheduler()
-scheduler.start()
 auth_info_table, engine = connect_db()
 
 def get_token(code, user_id, is_update):
@@ -81,7 +79,8 @@ def callback():
 
 		send_register_update_msg(user_id)
 		scale_cron(token, user_id)
-		scheduler.modify_job(user_id, args=[token, user_id])
+		update_cron(token, user_id)
+		# scheduler.modify_job(user_id, args=[token, user_id])
 		return render_template("token_reissued.html")
 
 	else:
@@ -91,7 +90,8 @@ def callback():
 			session.commit()
 			session.close()
 
-			scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[token, user_id], id=user_id)
+			# scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[token, user_id], id=user_id)
+			create_cron(token, user_id)
 			send_register_finish_msg(user_id)
 			return render_template("token_issued.html")
 
