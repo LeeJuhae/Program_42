@@ -9,10 +9,10 @@ from server import *
 scheduler = BackgroundScheduler()
 
 def create_cron(access_token, user_id):
-	scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[token, user_id], id=user_id)
+	scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[access_token, user_id], id=user_id)
 
 def update_cron(access_token, user_id):
-	scheduler.modify_job(user_id, args=[token, user_id])
+	scheduler.modify_job(user_id, args=[access_token, user_id])
 
 def scale_cron(access_token, user_id):
 	req_url = "https://api.intra.42.fr/v2/me/scale_teams/as_corrector"
