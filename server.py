@@ -1,6 +1,5 @@
 import requests
 import urllib.parse
-# from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request, redirect, render_template
 from sqlalchemy.orm import sessionmaker, scoped_session
 
@@ -8,8 +7,6 @@ from manage_db import *
 from msg_contents import *
 from slack_msg import *
 import datetime
-
-# from cron import *
 
 REDIRECT_URI = 'https://dry-shore-10386.herokuapp.com/callback'
 
@@ -73,14 +70,13 @@ def callback():
 	session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 	if is_update == "true":
-		update_query = get_update_query(auth_info_table, user_id, code)
+		update_query = get_update_query(auth_info_table, user_id, token)
 		session.execute(update_query)
 		session.commit()
 		session.close()
 
 		send_register_update_msg(user_id)
 		get_scale(token, user_id)
-		# scheduler.modify_job(user_id, args=[token, user_id])
 		return render_template("token_reissued.html")
 
 	else:
@@ -90,7 +86,6 @@ def callback():
 			session.commit()
 			session.close()
 
-			# scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[token, user_id], id=user_id)
 			send_register_finish_msg(user_id)
 			return render_template("token_issued.html")
 
@@ -109,6 +104,11 @@ def get_scale(access_token, user_id):
 
 	if len(res.json()) > 0:
 		if str(type(res.json())) == "<class 'dict'>" and res.json()['error'] == 'Not authorized':
+			session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+			update_query = get_update_query(auth_info_table, user_id, "")
+			session.execute(update_query)
+			session.commit()
+			session.close()
 			reregister(user_id)
 		elif str(type(res.json())) == "<class 'list'>" and 'correcteds' in res.json()[0].keys():
 			scale_dict = res.json()[0]
