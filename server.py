@@ -71,15 +71,13 @@ def callback():
 	session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 	if is_update == "true":
-
 		update_query = get_update_query(auth_info_table, user_id, code)
 		session.execute(update_query)
 		session.commit()
 		session.close()
 
 		send_register_update_msg(user_id)
-		scale_cron(token, user_id)
-		update_cron(token, user_id)
+		get_scale(token, user_id)
 		# scheduler.modify_job(user_id, args=[token, user_id])
 		return render_template("token_reissued.html")
 
@@ -91,7 +89,6 @@ def callback():
 			session.close()
 
 			# scheduler.add_job(scale_cron,'cron', minute="0,15,30,45", args=[token, user_id], id=user_id)
-			create_cron(token, user_id)
 			send_register_finish_msg(user_id)
 			return render_template("token_issued.html")
 
