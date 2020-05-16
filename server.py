@@ -7,6 +7,8 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from manage_db import *
 from msg_contents import *
 from slack_msg import *
+import datetime
+
 # from cron import *
 
 REDIRECT_URI = 'https://dry-shore-10386.herokuapp.com/callback'
