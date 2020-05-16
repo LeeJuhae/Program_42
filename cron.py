@@ -15,7 +15,7 @@ def scale_cron():
 	user_ls = session.query(auth_info_table).all()
 	session.close()
 	for user_id, access_token in user_ls:
-		get_scale(token, user_id)
+		get_scale(access_token, user_id)
 
 scheduler.start()
 
