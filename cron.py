@@ -7,6 +7,9 @@ import requests
 from msg_contents import *
 from server import *
 
+scheduler = BackgroundScheduler()
+
+@scheduler.scheduled_job('cron', second='*/10')
 def scale_cron():
 	session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 	user_ls = session.query(auth_info_table).all()
@@ -30,11 +33,11 @@ def get_scale(access_token, user_id):
 			scale_info = get_scale_info(scale_dict, access_token)
 			send_scale_message(user_id, scale_info)
 
+scheduler.start()
 
-if __name__ == "__main__":
-	scheduler = BackgroundScheduler()
-	scheduler.add_job(scale_cron, 'cron', minute="0,15,30,45")
-	scheduler.start()
+
+# if __name__ == "__main__":
+	# scheduler.add_job(scale_cron, 'cron', minute="0,15,30,45")
 
 
 # def create_cron(access_token, user_id):
