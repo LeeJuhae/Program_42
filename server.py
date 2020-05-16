@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from manage_db import *
 from msg_contents import *
 from slack_msg import *
-from cron import *
+# from cron import *
 
 REDIRECT_URI = 'https://dry-shore-10386.herokuapp.com/callback'
 
@@ -97,6 +97,21 @@ def callback():
 			session.close()
 			return render_template("token_already.html")
 
+def get_scale(access_token, user_id):
+	req_url = "https://api.intra.42.fr/v2/me/scale_teams/as_corrector"
+	headers = {"Authorization": "Bearer " + access_token}
+	params = {
+		"range[begin_at]" : str(datetime.datetime.utcnow()) + "," + str(datetime.datetime.utcnow() + datetime.timedelta(minutes=15))
+	}
+	res = requests.get(req_url, headers=headers, params=params)
+
+	if len(res.json()) > 0:
+		if str(type(res.json())) == "<class 'dict'>" and res.json()['error'] == 'Not authorized':
+			reregister(user_id)
+		elif str(type(res.json())) == "<class 'list'>" and 'correcteds' in res.json()[0].keys():
+			scale_dict = res.json()[0]
+			scale_info = get_scale_info(scale_dict, access_token)
+			send_scale_message(user_id, scale_info)
 
 if __name__ == '__main__':
 	try:
