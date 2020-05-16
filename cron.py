@@ -1,4 +1,5 @@
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
+# from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy.orm import sessionmaker, scoped_session
 import requests
 
@@ -6,7 +7,7 @@ from msg_contents import *
 from server import engine, auth_info_table, get_scale
 # import datetime
 
-scheduler = BackgroundScheduler()
+scheduler = BlockingScheduler()
 
 @scheduler.scheduled_job('cron', minute='*/1')
 def scale_cron():
