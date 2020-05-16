@@ -1,11 +1,10 @@
-from slack import WebClient
 from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy.orm import sessionmaker, scoped_session
-import datetime
 import requests
 
 from msg_contents import *
 from server import engine, auth_info_table, get_scale
+# import datetime
 
 scheduler = BackgroundScheduler()
 
