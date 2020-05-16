@@ -5,11 +5,11 @@ import datetime
 import requests
 
 from msg_contents import *
-from server import *
+from server import engine, auth_info_table
 
 scheduler = BackgroundScheduler()
 
-@scheduler.scheduled_job('cron', second='*/10')
+@scheduler.scheduled_job('cron', minute='*/1')
 def scale_cron():
 	session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 	user_ls = session.query(auth_info_table).all()
