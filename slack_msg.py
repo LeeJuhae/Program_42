@@ -22,6 +22,27 @@ def send_register_finish_msg(user_id):
 			])
 	return ""
 
+def send_msg(user_id, text):
+	client = WebClient(token=os.environ['SLACK_TOKEN'])
+	user_id = [user['id'] for user in client.users_list()['members'] if user['id'] == user_id][0]
+	response = client.conversations_open(users=user_id)
+	client.chat_postMessage(channel=response['channel']['id'], blocks=[
+			{
+				"type":"divider"
+			},
+			{
+				"type":"section",
+				"text":{
+					"type" : "mrkdwn",
+					"text": text
+				},
+			},
+			{
+				"type":"divider"
+			}
+			])
+	return ""
+
 
 def send_register_update_msg(user_id):
 	client = WebClient(token=os.environ['SLACK_TOKEN'])
