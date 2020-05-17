@@ -102,22 +102,18 @@ def get_scale(access_token, user_id):
 		"range[begin_at]" : str(datetime.datetime.utcnow()) + "," + str(datetime.datetime.utcnow() + datetime.timedelta(minutes=15))
 	}
 	res = requests.get(req_url, headers=headers, params=params)
-	try:
-		json_object = json.loads(str(res))
-		if len(res.json()) > 0:
-			if str(type(res.json())) == "<class 'dict'>" and res.json()['error'] == 'Not authorized':
-				session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
-				update_query = get_update_query(auth_info_table, user_id, "")
-				session.execute(update_query)
-				session.commit()
-				session.close()
-				reregister(user_id)
-			elif str(type(res.json())) == "<class 'list'>" and 'correcteds' in res.json()[0].keys():
-				scale_dict = res.json()[0]
-				scale_info = get_scale_info(scale_dict, access_token)
-				send_scale_message(user_id, scale_info)
-	except ValueError as e:
-		send_msg(user_id, res)
+	if len(res.json()) > 0:
+		if str(type(res.json())) == "<class 'dict'>" and res.json()['error'] == 'Not authorized':
+			session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+			update_query = get_update_query(auth_info_table, user_id, "")
+			session.execute(update_query)
+			session.commit()
+			session.close()
+			reregister(user_id)
+		elif str(type(res.json())) == "<class 'list'>" and 'correcteds' in res.json()[0].keys():
+			scale_dict = res.json()[0]
+			scale_info = get_scale_info(scale_dict, access_token)
+			send_scale_message(user_id, scale_info)
 
 if __name__ == '__main__':
 	try:
