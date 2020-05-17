@@ -103,7 +103,7 @@ def get_scale(access_token, user_id):
 	}
 	res = requests.get(req_url, headers=headers, params=params)
 	try:
-		json_object = json.loads(res)
+		json_object = json.loads(str(res))
 		if len(res.json()) > 0:
 			if str(type(res.json())) == "<class 'dict'>" and res.json()['error'] == 'Not authorized':
 				session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
