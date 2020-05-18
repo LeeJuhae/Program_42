@@ -10,10 +10,9 @@ scheduler = BlockingScheduler()
 @scheduler.scheduled_job('cron', minute='0,15,30,45')
 def scale_cron():
 	session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
-	user_ls = session.query(auth_info_table).all()
+	user_ls = session.query(auth_info_table).filter(auth_info_table.c.token !="").all()
 	session.close()
 	for user_id, access_token in user_ls:
-		if access_token != "":
-			get_scale(access_token, user_id)
+		get_scale(access_token, user_id)
 
 scheduler.start()
