@@ -26,7 +26,6 @@
 
 
 1.  Workspace에 42seoul 이메일(```<your-id>@student.42seoul.kr```)로 참여하세요. 
-(참여를 원하시는 분은 juhlee 또는 jushin에게 slack dm 보내주세요!)
 
 2. 채팅 창에 ```/register```를 입력하세요.
 
