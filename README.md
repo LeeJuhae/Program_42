@@ -25,7 +25,7 @@
 ## > 사용 방법 / Usage
 
 
-1.  Workspace에 42seoul 이메일(```<your-id>@student.42seoul.kr```)로 참여하세요. 
+1.  Workspace에 42seoul 이메일(```<your-id>@student.42seoul.kr```)로 참여하세요. (참여를 원하시는 분은 juhlee에게 slack dm 부탁드립니다.)
 
 2. 채팅 창에 ```/register```를 입력하세요.
 
